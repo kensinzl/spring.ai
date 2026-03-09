@@ -1,10 +1,13 @@
 package com.demo.spring.ai.config;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class ChatClientConfig {
@@ -18,6 +21,7 @@ public class ChatClientConfig {
                 maxTokens(150). // The maxTokens parameter limits how many tokens (word pieces) the model can generate in its response.
                 build();
 
+        // the following all default can be overridden at the API level, e.g. in the controller
         return chatClientBuilder.
                 defaultSystem("""
                         You are an internal HR assistant. Your role is to help
@@ -28,6 +32,7 @@ public class ChatClientConfig {
                         HR policies.
                         """).
                 defaultOptions(chatOptions).
+                defaultAdvisors(List.of(new SimpleLoggerAdvisor())). // see this advisor source code, it add log before and after the llm call
                 build();
     }
 }
