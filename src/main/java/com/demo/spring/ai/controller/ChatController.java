@@ -1,6 +1,7 @@
 package com.demo.spring.ai.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,8 @@ public class ChatController {
      */
     @GetMapping("/chat/{message}")
     public String chat(@PathVariable("message") String message) {
-        return chatClient.
+        ChatResponse chatResponse =
+                chatClient.
                 // spring ai source code wrap the str content as the user role
                 //prompt(message).
                 prompt().
@@ -43,6 +45,9 @@ public class ChatController {
                     promptUserSpec.text(userPrompt).param("customerName", "Liang").param("customerMessage", message);
                 }).
                 system(systemStuffingPrompt).
-                call().content();
+                call().chatResponse();
+
+        System.out.println("--- Model: " + chatResponse.getMetadata().getModel());
+        return chatResponse.getResult().getOutput().getText();
     }
 }
