@@ -12,7 +12,8 @@ import java.util.List;
 @Configuration
 public class ChatClientConfig {
 
-    @Bean
+
+    @Bean("chatClient")
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder) {
 
         ChatOptions chatOptions =

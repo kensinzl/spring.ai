@@ -1,24 +1,26 @@
 package com.demo.spring.ai.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.Resource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
 public class ChatController {
 
     private final ChatClient chatClient;
-
     private final Resource systemStuffingPrompt;
     private final Resource userPrompt;
 
 
     @Autowired
-    public ChatController (ChatClient chatClient,
+    public ChatController (@Qualifier("chatClient") ChatClient chatClient,
                            @Value("classpath:/promptTemplate/systemStuffingPrompt.st") Resource systemStuffingPrompt,
                            @Value("classpath:/promptTemplate/userPrompt.st") Resource userPrompt) {
         this.chatClient = chatClient;
