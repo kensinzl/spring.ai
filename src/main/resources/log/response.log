@@ -11,8 +11,8 @@ response: {
       "tokensReset" : 0.187000000
     },
     "usage" : {
-      "promptTokens" : 564,
-      "completionTokens" : 4,
+      "promptTokens" : 564,   -- request token usage, I think should be system + user token
+      "completionTokens" : 4, -- response token usage, you can limit at the default option
       "totalTokens" : 568,
       "nativeUsage" : {
         "completion_tokens" : 4,

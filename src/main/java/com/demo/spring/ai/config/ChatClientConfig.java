@@ -19,7 +19,7 @@ public class ChatClientConfig {
         ChatOptions chatOptions =
                 ChatOptions.builder().model(OpenAiApi.ChatModel.GPT_4_1_MINI.value). // choose a cheaper model
                 temperature(0.7). // Temperature controls the randomness or "creativity" of the model’s response
-                maxTokens(150). // The maxTokens parameter limits how many tokens (word pieces) the model can generate in its response.
+                maxTokens(150). // The maxTokens parameter limits how many tokens (word pieces) the model can generate in its response(completion token).
                 build();
 
         // the following all default can be overridden at the API level, e.g. in the controller
