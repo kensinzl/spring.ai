@@ -48,18 +48,20 @@ public class RagController {
     @GetMapping("/embedded")
     public ResponseEntity<String> chatMemory(@RequestHeader("username") String username, @RequestParam("message") String message) {
 
-        SearchRequest ragSearchRequest = SearchRequest.builder().query(message).topK(3).similarityThreshold(0.5).build();
-        List<Document> similarDocs =  vectorStore.similaritySearch(ragSearchRequest);
-        log.info("Fetch {} Similar Docs From Qdrant. ",  similarDocs.size());
-
-        String similarContext =
-                similarDocs.stream().map(Document::getText).collect(Collectors.joining(System.lineSeparator()));
-        log.info("Similar Context will be appended into system role. \n {}",  similarContext);
+//        SearchRequest ragSearchRequest = SearchRequest.builder().query(message).topK(3).similarityThreshold(0.5).build();
+//        List<Document> similarDocs = vectorStore.similaritySearch(ragSearchRequest);
+//        log.info("Fetch {} Similar Docs From Qdrant. ",  similarDocs.size());
+//
+//        String similarContext =
+//                similarDocs.stream().map(Document::getText).collect(Collectors.joining(System.lineSeparator()));
+//        log.info("Similar Context will be appended into system role. \n {}",  similarContext);
 
         String answer =
                 chatClient.
                 prompt().
-                system(promptSystemSpec -> promptSystemSpec.text(promptTemplate).param("documents", similarContext)).
+// MessageChatMemoryAdvisor wraps user message and vector messages into a whole user role message
+// Otherwise, like the comment way, using the system role message
+//                system(promptSystemSpec -> promptSystemSpec.text(promptTemplate).param("documents", similarContext)).
                 advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, username)).
                 user(message).
                 call().content();

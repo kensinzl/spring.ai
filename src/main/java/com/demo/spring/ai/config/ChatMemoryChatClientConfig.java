@@ -9,6 +9,9 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +29,28 @@ public class ChatMemoryChatClientConfig {
     ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository) {
         return MessageWindowChatMemory.builder().maxMessages(10) // H2 DB max stored messages amount per conversion id, each time fetch all
                 .chatMemoryRepository(jdbcChatMemoryRepository).build();
+    }
+
+    /***
+     * Using RetrievalAugmentationAdvisor embedded source code to fetch the similar messages
+     *
+     * 1. MessageChatMemoryAdvisor first will fetch all history user and assistant messages
+     * 2. Append with the latest input user message and the default system message(I coded it before at the ChatClient)
+     * 3. RetrievalAugmentationAdvisor r0w 146 wraps the fetched vector message and latest user message via a temple, and the whole is the user role message
+     *
+     * @param vectorStore
+     * @return
+     */
+    @Bean
+    RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
+        return RetrievalAugmentationAdvisor.builder().documentRetriever(
+                VectorStoreDocumentRetriever.
+                        builder().
+                        vectorStore(vectorStore).
+                        topK(3).
+                        similarityThreshold(0.5).
+                        build()
+                ).build();
     }
 
     /**
@@ -46,7 +71,7 @@ public class ChatMemoryChatClientConfig {
      * @return
      */
     @Bean("chatMemoryChatClient")
-    public ChatClient chatClient(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory) {
+    public ChatClient chatClient(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, RetrievalAugmentationAdvisor retrievalAugmentationAdvisor) {
 
         ChatOptions chatOptions =
                         ChatOptions.builder().model(OpenAiApi.ChatModel.GPT_4_1_MINI.value). // choose a cheaper model
@@ -68,7 +93,7 @@ public class ChatMemoryChatClientConfig {
                         HR policies.
                         """).
                 defaultOptions(chatOptions).
-                defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor)).
+                defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor, retrievalAugmentationAdvisor)).
                 build();
     }
 }
