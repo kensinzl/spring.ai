@@ -24,7 +24,7 @@ public class ChatMemoryChatClientConfig {
 
     @Bean
     ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository) {
-        return MessageWindowChatMemory.builder().maxMessages(10) // H2 DB max stored messages amount, each time fetch all
+        return MessageWindowChatMemory.builder().maxMessages(10) // H2 DB max stored messages amount per conversion id, each time fetch all
                 .chatMemoryRepository(jdbcChatMemoryRepository).build();
     }
 

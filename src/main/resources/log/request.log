@@ -1,0 +1,84 @@
+request: ChatClientRequest
+[
+	prompt=
+		Prompt{
+			messages=
+			[
+				UserMessage{
+						content='what is day leave', metadata={messageType=USER}, messageType=USER
+					},
+
+				AssistantMessage [
+					messageType=ASSISTANT, toolCalls=[],
+					textContent=It seems like you might be referring to "paid leave" or a specific type of leave. In our company, employees are entitled to **18 days of paid leave annually**. These are days you can take off work while still receiving your salary.
+
+					If you meant something else by "day leave," could you please clarify? I'm here to help with any questions related to leave entitlements or other HR policies!,
+					metadata={messageType=ASSISTANT}
+					],
+
+				UserMessage{
+					content='what is day leave', metadata={messageType=USER}, messageType=USER
+				},
+
+				AssistantMessage [
+					messageType=ASSISTANT, toolCalls=[],
+					textContent=Hello! It seems like you might be asking about "day leave." If you mean a full day off from work using your paid leave entitlement, then yes, each day of paid leave allows you to take a full workday off while still receiving your salary.
+
+					Our policy grants **18 days of paid leave annually**, and you can carry over up to 8 unused days to the next year.
+
+					If you meant something different by "day leave," please let me know, and I'll be happy to assist!,
+					metadata={messageType=ASSISTANT}
+					],
+
+				UserMessage{
+						content='what is day leave', metadata={messageType=USER}, messageType=USER
+				},
+				AssistantMessage [
+					messageType=ASSISTANT, toolCalls=[],
+					textContent=Hello! In the context of our HR policies, a "day leave" typically refers to taking a full day off using your paid leave entitlement. Our company provides **18 days of paid leave annually**, which you can use to take time off while still receiving your salary.
+
+					If you have any specific questions about how to apply for leave or the types of leave available, feel free to ask!, metadata={messageType=ASSISTANT}
+					],
+
+				UserMessage{
+					content='what is day leave', metadata={messageType=USER}, messageType=USER
+				},
+
+				AssistantMessage [
+					messageType=ASSISTANT, toolCalls=[],
+					textContent=Hello! In our HR policy, a "day leave" generally means taking a full day off from work using your paid leave entitlement. You have **18 days of paid leave annually**, which you can use to take such days off while still receiving your salary.
+
+					If you need more details about how to apply for leave or other types of leave, feel free to ask!, metadata={messageType=ASSISTANT}
+					],
+
+				UserMessage{
+					content='what is day leave', metadata={messageType=USER}, messageType=USER
+				},
+
+				AssistantMessage [
+					messageType=ASSISTANT, toolCalls=[],
+					textContent=Hello! In the context of our HR policies, "day leave" usually refers to taking a full day off work using your paid leave entitlement. Our company provides **18 days of paid leave annually**, which you can use to take days off while still receiving your salary.
+
+					If you have any other questions about leave types, how to apply, or related policies, feel free to ask!, metadata={messageType=ASSISTANT}
+					],
+
+
+				SystemMessage{
+					textContent='You are a helpful assistant, answering questions based on the given context in the
+					DOCUMENTS section and no prior knowledge. If the answer is not in the DOCUMENTS section,
+					then reply with "I don't know".
+
+					DOCUMENTS:
+					----------
+					Remote work offers flexibility but requires clear communication.
+					Remote work offers flexibility but requires clear communication.
+					Remote work offers flexibility but requires clear communication.
+					----------', messageType=SYSTEM, metadata={messageType=SYSTEM}
+				},
+
+				UserMessage{content='how are you', metadata={messageType=USER}, messageType=USER}
+			],
+			modelOptions=org.springframework.ai.chat.prompt.DefaultChatOptions@5af6775d
+		},
+	context={chat_memory_conversation_id=liang}
+]
