@@ -1,7 +1,6 @@
 package com.demo.spring.ai.config;
 
 import com.demo.spring.ai.rag.HybridDocumentRetriever;
-import com.demo.spring.ai.rag.TavilyDocumentRetriever;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -14,6 +13,7 @@ import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +46,21 @@ public class ChatMemoryChatClientConfig {
      * 2. Append with the latest input user message and the default system message(I coded it before at the ChatClient)
      * 3. RetrievalAugmentationAdvisor r0w 146 wraps the fetched vector message and latest user message via a temple, and the whole is the user role message
      *
-     * @param vectorStore
      * @return
      */
     @Bean
-    RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
-        return RetrievalAugmentationAdvisor.builder().documentRetriever(hybridDocumentRetriever).build();
+    RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(ChatClient.Builder chatClientBuilder) {
+
+        // pre-retrieval, translate CN -> EN via LLM and then pass the EN to LLM
+        TranslationQueryTransformer translationQueryTransformer =
+                TranslationQueryTransformer.builder().
+                        targetLanguage("EN").
+                        chatClientBuilder(chatClientBuilder).
+                        build();
+
+        return RetrievalAugmentationAdvisor.builder().
+                queryTransformers(translationQueryTransformer).
+                documentRetriever(hybridDocumentRetriever).build();
     }
 
     /**
