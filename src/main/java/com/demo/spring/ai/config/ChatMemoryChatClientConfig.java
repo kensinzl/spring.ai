@@ -1,5 +1,6 @@
 package com.demo.spring.ai.config;
 
+import com.demo.spring.ai.rag.HybridDocumentRetriever;
 import com.demo.spring.ai.rag.TavilyDocumentRetriever;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientRequest;
@@ -15,6 +16,7 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,6 +29,9 @@ import java.util.List;
  */
 @Configuration
 public class ChatMemoryChatClientConfig {
+
+    @Autowired
+    private HybridDocumentRetriever hybridDocumentRetriever;
 
     @Bean
     ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository) {
@@ -46,23 +51,7 @@ public class ChatMemoryChatClientConfig {
      */
     @Bean
     RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
-//        return RetrievalAugmentationAdvisor.builder().documentRetriever(
-//                VectorStoreDocumentRetriever.
-//                        builder().
-//                        vectorStore(vectorStore).
-//                        topK(3).
-//                        similarityThreshold(0.5).
-//                        build()
-//                ).build();
-
-        return RetrievalAugmentationAdvisor.builder().documentRetriever(
-                TavilyDocumentRetriever.
-                        builder().
-                        maxResults(3).
-                        build()
-                ).build();
-
-
+        return RetrievalAugmentationAdvisor.builder().documentRetriever(hybridDocumentRetriever).build();
     }
 
     /**
