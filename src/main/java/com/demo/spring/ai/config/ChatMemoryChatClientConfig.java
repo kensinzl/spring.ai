@@ -1,6 +1,8 @@
 package com.demo.spring.ai.config;
 
+import com.demo.spring.ai.rag.TavilyDocumentRetriever;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
@@ -8,6 +10,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
@@ -43,14 +46,23 @@ public class ChatMemoryChatClientConfig {
      */
     @Bean
     RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
+//        return RetrievalAugmentationAdvisor.builder().documentRetriever(
+//                VectorStoreDocumentRetriever.
+//                        builder().
+//                        vectorStore(vectorStore).
+//                        topK(3).
+//                        similarityThreshold(0.5).
+//                        build()
+//                ).build();
+
         return RetrievalAugmentationAdvisor.builder().documentRetriever(
-                VectorStoreDocumentRetriever.
+                TavilyDocumentRetriever.
                         builder().
-                        vectorStore(vectorStore).
-                        topK(3).
-                        similarityThreshold(0.5).
+                        maxResults(3).
                         build()
                 ).build();
+
+
     }
 
     /**
@@ -79,7 +91,7 @@ public class ChatMemoryChatClientConfig {
                         maxTokens(150). // The maxTokens parameter limits how many tokens (word pieces) the model can generate in its response.
                         build();
 
-        Advisor loggerAdvisor = new SimpleLoggerAdvisor();
+        Advisor loggerAdvisor = new SimpleLoggerAdvisor(ChatClientRequest::toString, ModelOptionsUtils::toJsonStringPrettyPrinter, 1);
         Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
 
         // generate a default DefaultChatClient instance which use the step builder pattern
