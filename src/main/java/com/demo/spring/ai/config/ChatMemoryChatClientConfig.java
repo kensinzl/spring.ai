@@ -1,6 +1,7 @@
 package com.demo.spring.ai.config;
 
 import com.demo.spring.ai.rag.HybridDocumentRetriever;
+import com.demo.spring.ai.tool.TimeTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -81,7 +82,10 @@ public class ChatMemoryChatClientConfig {
      * @return
      */
     @Bean("chatMemoryChatClient")
-    public ChatClient chatClient(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, RetrievalAugmentationAdvisor retrievalAugmentationAdvisor) {
+    public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
+                                 ChatMemory chatMemory,
+                                 RetrievalAugmentationAdvisor retrievalAugmentationAdvisor,
+                                 TimeTools timeTools) {
 
         ChatOptions chatOptions =
                         ChatOptions.builder().model(OpenAiApi.ChatModel.GPT_4_1_MINI.value). // choose a cheaper model
@@ -102,8 +106,11 @@ public class ChatMemoryChatClientConfig {
                         kindly inform them that you can only assist with queries related to
                         HR policies.
                         """).
+                defaultTools(timeTools).
                 defaultOptions(chatOptions).
-                defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor, retrievalAugmentationAdvisor)).
+                // do not do the rag to save money
+               // defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor, retrievalAugmentationAdvisor)).
+                defaultAdvisors(List.of(loggerAdvisor)).
                 build();
     }
 }
