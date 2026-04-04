@@ -110,7 +110,7 @@ public class ChatMemoryChatClientConfig {
                 defaultOptions(chatOptions).
                 // do not do the rag to save money
                // defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor, retrievalAugmentationAdvisor)).
-                defaultAdvisors(List.of(loggerAdvisor)).
+                defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor)).
                 build();
     }
 }

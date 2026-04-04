@@ -17,6 +17,9 @@ import java.time.ZoneId;
  *  4. LLM gives the result
  *
  *  OpenAiChatModel(internalCall) -> DefaultToolCallingManager(executeToolCalls) invoke the Tool function
+ *
+ *  internalCall function - you can find the itself invokes twice depends on the returnDirect boolean, one is step 1 and the other is step 3
+ *
  */
 @Component
 @Log4j2
