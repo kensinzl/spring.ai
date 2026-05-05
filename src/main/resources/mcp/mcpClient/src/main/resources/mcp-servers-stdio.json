@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/zhaoliang/Workspace/spring.ai"
+      ]
+    },
+    "myMCPServer": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "/Users/zhaoliang/Workspace/mcpServer/target/spring.ai-0.0.1-SNAPSHOT.jar"
+      ]
+    }
+  }
+}
