@@ -1,6 +1,9 @@
 package com.demo.spring.ai.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.evaluation.RelevancyEvaluator;
+import org.springframework.ai.evaluation.EvaluationRequest;
+import org.springframework.ai.evaluation.EvaluationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,15 +20,18 @@ public class ChatController {
     private final ChatClient chatClient;
     private final Resource systemStuffingPrompt;
     private final Resource userPrompt;
+    private final RelevancyEvaluator relevancyEvaluator;
 
 
     @Autowired
     public ChatController (@Qualifier("chatClient") ChatClient chatClient,
                            @Value("classpath:/promptTemplate/systemStuffingPrompt.st") Resource systemStuffingPrompt,
-                           @Value("classpath:/promptTemplate/userPrompt.st") Resource userPrompt) {
+                           @Value("classpath:/promptTemplate/userPrompt.st") Resource userPrompt,
+                           RelevancyEvaluator relevancyEvaluator) {
         this.chatClient = chatClient;
         this.systemStuffingPrompt = systemStuffingPrompt;
         this.userPrompt = userPrompt;
+        this.relevancyEvaluator = relevancyEvaluator;
     }
 
     /**
@@ -38,7 +44,7 @@ public class ChatController {
      */
     @GetMapping("/chat/{message}")
     public String chat(@PathVariable("message") String message) {
-        return
+        String aiResponse =
                 chatClient.
                 // spring ai source code wrap the str content as the user role
                 //prompt(message).
@@ -48,5 +54,11 @@ public class ChatController {
                 }).
                 system(systemStuffingPrompt).
                 call().content();
+        EvaluationRequest evaluationRequest = new EvaluationRequest(message, aiResponse);
+        EvaluationResponse response = relevancyEvaluator.evaluate(evaluationRequest);
+        if(!response.isPass()) {
+            throw new RuntimeException("not good response from LLM");
+        }
+        return aiResponse;
     }
 }
